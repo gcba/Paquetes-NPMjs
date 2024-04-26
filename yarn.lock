@@ -727,9 +727,9 @@
     "@ethersproject/strings" "^5.7.0"
 
 "@extrimian/agent@*", "@extrimian/agent@^0.8.5":
-  version "0.8.6"
-  resolved "https://registry.yarnpkg.com/@extrimian/agent/-/agent-0.8.6.tgz#d2a2d0a62069c577f1089c044bbb093ae59c2b11"
-  integrity sha512-Y/bCBBR5cXo0t0GoNNGGhbcrGdQv3WXSl4H6Um0gaFvIV75RWnSTqeawW3WDHPm9cAF2zNEXSmSbV7OirogW8Q==
+  version "0.8.7"
+  resolved "https://registry.yarnpkg.com/@extrimian/agent/-/agent-0.8.7.tgz#0041bc102461b89e86cab585f48e4858407d007e"
+  integrity sha512-hUuAAMjCHnhx99Nt3l1hX3Lx7+TF4DjW+XhU//8qt27TaYizVL2xUSYQGDQCknOGKJ4AekgrjRuCE5RMnN5d7A==
   dependencies:
     "@extrimian/did-core" "1.0.7"
     "@extrimian/did-registry" "^1.5.0"
@@ -752,6 +752,14 @@
     socket.io "^4.6.1"
     socket.io-client "^4.6.1"
 
+"@extrimian/ami-sdk@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@extrimian/ami-sdk/-/ami-sdk-0.1.2.tgz#7e426e72b6fbffce5af5d10495a66aaf6a644dc7"
+  integrity sha512-3AvoufHRNVZYE0KpWc+tQZAIPuqc1Y4sT/1UoL6d7bLbCDvXpGcKrXUtA/c8GKB/STOhMauCCpw0ssUVfD6d/w==
+  dependencies:
+    "@extrimian/ami-core" "0.1.0"
+    "@extrimian/kms-core" "1.3.0"
+
 "@extrimian/did-core@1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@extrimian/did-core/-/did-core-1.0.7.tgz#708e9b79d9e13649b7629bef47df4b25cd9b5e53"
@@ -759,7 +767,22 @@
   dependencies:
     reflect-metadata "^0.1.13"
 
-"@extrimian/kms-client@1.3.0", "@extrimian/kms-client@^1.3.0":
+"@extrimian/kms-client@1.4.0-0":
+  version "1.4.0-0"
+  resolved "https://registry.yarnpkg.com/@extrimian/kms-client/-/kms-client-1.4.0-0.tgz#1991f77c7f1bc565ecaf502b7cbbfd520c20a305"
+  integrity sha512-bFZoYuD7A58liTAuXAbf3UGNIjmKmiEtA+aI0E6626PNb/0O0YOM9w26287xVmLl06R7PanLv1IAB07YoZeydg==
+  dependencies:
+    "@extrimian/did-core" "^1.0.8"
+    "@extrimian/kms-core" "1.4.0-0"
+    "@extrimian/kms-suite-bbsbls2020" "1.2.0-0"
+    "@extrimian/kms-suite-didcomm" "^1.1.0"
+    "@extrimian/kms-suite-didcomm-v2" "^1.3.0"
+    "@extrimian/kms-suite-es256k" "^1.1.0"
+    "@extrimian/kms-suite-rsa-signature-2018" "^1.1.0"
+    "@extrimian/vc-core" "1.0.7"
+    ts-jest "^28.0.1"
+
+"@extrimian/kms-client@^1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@extrimian/kms-client/-/kms-client-1.3.0.tgz#3b00c92378b37609b550dc5aa8071506dbecf1ce"
   integrity sha512-6lc1VQH5Zd/qZ29tKhB9oR30nB8xWTN5xjdsn4ZLCntSmhOTc6RlqaMG/p5tVeQPr3kf41uXpg4lr/NyU3Osig==
@@ -789,6 +812,19 @@
     multiformats "^9.6.5"
     text-encoding "^0.7.0"
 
+"@extrimian/kms-core@1.4.0-0":
+  version "1.4.0-0"
+  resolved "https://registry.yarnpkg.com/@extrimian/kms-core/-/kms-core-1.4.0-0.tgz#58ec7e1c6da69378c1c5d5fea928eb93e2e34289"
+  integrity sha512-m64H2/xPZ2TalGNX7VEvWvpJVw8BS89wTrc2j1BGF31ho0LzzOpy3D1xP9ejWcnWKZLq6ZASAUF4eqb8Sin2GA==
+  dependencies:
+    base64url "^3.0.1"
+    bs58 "^5.0.0"
+    did-jwt "^6.11.0"
+    jsonld "^5.2.0"
+    multibase "^4.0.6"
+    multiformats "^9.6.5"
+    text-encoding "^0.7.0"
+
 "@extrimian/kms-suite-bbsbls2020@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@extrimian/kms-suite-bbsbls2020/-/kms-suite-bbsbls2020-1.1.1.tgz#319a374811ceb39f7116caecf0fdd303d98a819a"
@@ -797,6 +833,18 @@
     "@extrimian/did-core" "1.0.7"
     "@extrimian/kms-suite-jsonld" "^1.1.1"
     "@mattrglobal/jsonld-signatures-bbs" "0.12.0"
+
+"@extrimian/oneclick-sdk@0.3.0":
+  version "0.3.0-0"
+  resolved "https://registry.yarnpkg.com/@extrimian/oneclick-sdk/-/oneclick-sdk-0.3.0-0.tgz#4f7ddff89a5396e64e0bec7aaf08450a65aa4f3e"
+  integrity sha512-8ao2nb2+LR+ffxlMd7xGLSDu1RfGOKcWxSvhJIrgCeSrC1uupeE5hYJuWHzleCyOW3WZa92uXqhxyZq51K9KRA==
+  dependencies:
+    "@extrimian/did-registry" "1.5.0"
+    "@extrimian/did-resolver" "1.4.4"
+    axios "^1.3.5"
+    class-transformer "^0.5.1"
+    class-validator "^0.14.0"
+    dotenv "^16.0.3"
 
 "@extrimian/vc-core@1.0.7", "@extrimian/vc-core@^1.0.7":
   version "1.0.7"
@@ -825,6 +873,16 @@
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@extrimian/waci/-/waci-2.1.1.tgz#2204a8ff617c3ac671b7ed3b6012e94c4c6ee64a"
   integrity sha512-GuSOpVQkwlxlzu1Lf23Jj17jq8/0yXEZZsPcJx62pr010gvs0E6QJeWUMW0msgGJ3iZtEFRgXRbxxpZj1Dgb9w==
+  dependencies:
+    jsonpath "^1.1.1"
+    jsonschema "^1.4.1"
+    lodash "^4.17.21"
+    uuid "^8.3.2"
+
+"@extrimian/waci@~3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@extrimian/waci/-/waci-3.0.0.tgz#7cfe861f491acad6d202c820c4e350f27cf9fc1d"
+  integrity sha512-TvZnMJ1sL3+fZkEH6DNHigqjXx2IRhPoi4cRveZFO7AH2Ql9TQhNidvCyCuR7OHCUOo9r7lYMoVm2mxm67aRsQ==
   dependencies:
     jsonpath "^1.1.1"
     jsonschema "^1.4.1"
