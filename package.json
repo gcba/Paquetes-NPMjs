@@ -24,7 +24,7 @@
 		"packages/agent/plugins/one-click",
 		"packages/ami/ami-core",
 		"packages/ami/ami-sdk",
-		"packages/agent/plugins/ami"
+		"packages/agent/plugins/quarkid-status-list"
 	],
 	"scripts": {
 		"build": "yarn workspaces run build",
