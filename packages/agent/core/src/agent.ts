@@ -1,5 +1,5 @@
-import { KMSClient } from "@extrimian/kms-client";
-import { IKMS, LANG } from "@extrimian/kms-core";
+import { KMSClient } from "@quarkid/kms-client";
+import { IKMS, LANG } from "@quarkid/kms-core";
 import { VCProtocolNotFoundError } from "./exceptions/vc-protocol-not-found";
 import { Messaging } from "./messaging/messaging";
 import { AgentIdentity } from "./models/agent-identity";
@@ -15,6 +15,10 @@ import { PluginDispatcher } from "./plugins/plugin-dispatcher";
 import { AgentTransport } from "./transport/transport";
 import { VCProtocol } from "./vc/protocols/vc-protocol";
 import { VC } from "./vc/vc";
+import { LiteEvent } from "./utils/lite-event";
+import { IStatusListAgentPlugin } from "./plugins/istatus-list-plugin";
+import { AgentPluginBase } from "./plugins/ivc-interceptor-plugin";
+import { VerifiableCredential } from "@extrimian/vc-core";
 
 export class Agent {
     private _messaging: Messaging;
@@ -39,6 +43,7 @@ export class Agent {
                 resolver: this.resolver,
                 transports: this.agentTransport,
                 vcProtocols: this.vcProtocols,
+                verificationRules: this.verificationRules,
             })
         }
         return this._vc;
@@ -62,8 +67,14 @@ export class Agent {
         return this.agentTransport;
     }
 
-    private plugins: IAgentPlugin[];
+    private credentialStatusPlugins: IStatusListAgentPlugin[];
+    private plugins: (IAgentPlugin | AgentPluginBase)[];
     private readonly pluginDispatcher: PluginDispatcher;
+
+    private readonly onAgentInitialized = new LiteEvent<void>();
+    public get agentInitialized() { return this.onAgentInitialized.expose(); }
+
+    public verificationRules: ((vc: VerifiableCredential) => Promise<{ result: boolean, rejectDetail?: { name: string, description: string, code: number } }>)[] = [];
 
     constructor(params: {
         didDocumentResolver: IAgentResolver,
@@ -73,14 +84,15 @@ export class Agent {
         agentStorage: IStorage,
         vcStorage: IStorage,
         vcProtocols: VCProtocol[],
-        agentPlugins?: IAgentPlugin[],
+        agentPlugins?: (IAgentPlugin | AgentPluginBase)[],
+        credentialStatusPlugins?: IStatusListAgentPlugin[],
         mnemonicLang?: LANG
     }) {
         this.agentSecureStorage = params.secureStorage;
         this.vcStorage = params.vcStorage;
         this.agentSecureStorage = params.secureStorage;
         this.agentStorage = params.agentStorage;
-        this.pluginDispatcher = new PluginDispatcher(params.agentPlugins);
+        this.pluginDispatcher = new PluginDispatcher(params.agentPlugins.filter(x => (<IAgentPlugin>x).canHandle) as IAgentPlugin[]);
         this.vcProtocols = params.vcProtocols;
 
         this.kms = new KMSClient({
@@ -107,11 +119,11 @@ export class Agent {
 
         this.resolver = params.didDocumentResolver as IAgentResolver;
         this.registry = params.didDocumentRegistry as IAgentRegistry;
-        this.registry.initialize({ kms: this.kms });
+        this.registry.initialize({ kms: this.kms as any });
 
         this.agentKMS = new AgentKMS({
             identity: this.identity,
-            kms: this.kms,
+            kms: this.kms as any,
             resolver: this.resolver
         });
 
@@ -127,6 +139,11 @@ export class Agent {
         });
 
         this.plugins = params.agentPlugins;
+        this.credentialStatusPlugins = params.credentialStatusPlugins;
+    }
+
+    async addVerificationRules(v: (vc: VerifiableCredential) => Promise<{ result: boolean, rejectDetail?: { name: string, description: string, code: number } }>) {
+        this.verificationRules.push(v);
     }
 
     async initialize(params?: {
@@ -142,6 +159,10 @@ export class Agent {
             await Promise.all(this.plugins.map(async x => await x.initialize({ agent: this })));
         }
 
+        if (this.credentialStatusPlugins && this.credentialStatusPlugins.length > 0) {
+            this.initializeStatusListPlugins();
+        }
+
         if (!this._vc) {
             this._vc = new VC({
                 messaging: this.messaging,
@@ -152,11 +173,12 @@ export class Agent {
                 resolver: this.resolver,
                 transports: this.agentTransport,
                 vcProtocols: this.vcProtocols,
+                verificationRules: this.verificationRules,
             });
         }
 
         this._messaging = new Messaging({
-            kms: this.kms,
+            kms: this.kms as any,
             identity: this.identity,
             resolver: this.resolver,
             registry: this.registry,
@@ -170,6 +192,31 @@ export class Agent {
                 contextMessage: data.contextMessage
             });
         });
+
+        this.onAgentInitialized.trigger();
+    }
+
+    async initializeStatusListPlugins() {
+        const ensureDIDCreated = async () => {
+            if (this.identity.getDIDs().length > 0) return;
+
+            return new Promise<void>((resolve, reject) => {
+
+                const didCreatedEvent = () => {
+                    resolve();
+                    this.identity.didCreated.off(didCreatedEvent);
+                }
+
+                this.identity.didCreated.on(didCreatedEvent)
+            });
+        }
+
+        await ensureDIDCreated();
+
+        for (let cs of this.credentialStatusPlugins) {
+            this.vc.addCredentialStatusStrategy(cs);
+            cs.initialize({ agent: this });
+        }
     }
 
     async processMessage(params: {
